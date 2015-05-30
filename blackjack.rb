@@ -5,18 +5,12 @@ require_relative 'blackjack/dealer'
 module Blackjack
   class Game
     def self.start
-      Game.new
+      Game.new.start
     end
 
     def initialize
       @dealer = Dealer.new('👽 ', 2)
       @players = [Player.new('👺 '), RealPlayer.new('😚 ')]
-
-      start
-      shuffle_card
-      blackjack_progress
-      game_over
-      again?
     end
 
     def start
@@ -24,6 +18,11 @@ module Blackjack
       puts "Dealer: #{@dealer.name}"
       puts "Players: #{@players.map(&:name).to_a.join(' ')}"
       puts '============'
+
+      shuffle_card
+      blackjack_progress
+      game_over
+      again?
     end
 
     def shuffle_card
@@ -109,4 +108,4 @@ module Blackjack
   end
 end
 
-Blackjack::Game.start
+# Blackjack::Game.start
