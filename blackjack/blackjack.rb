@@ -1,6 +1,6 @@
-require_relative 'blackjack/card'
-require_relative 'blackjack/player'
-require_relative 'blackjack/dealer'
+require_relative 'card'
+require_relative 'player'
+require_relative 'dealer'
 
 module Blackjack
   class Game
