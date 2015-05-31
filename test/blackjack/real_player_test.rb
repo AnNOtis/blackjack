@@ -12,18 +12,14 @@ class TestRealPlayer < Minitest::Test
   end
 
   def test_should_i_hit?
-    answer = @player.send :should_i_hit?
-    out = capture_io do
-      puts "h"
+    STDIN.stub :gets, 'h' do
+      answer = @player.send :should_i_hit?
+      assert (answer == true)
     end
 
-    assert (answer == true)
-
-    answer = @player.send :should_i_hit?
-    out = capture_io do
-      puts "s"
+    STDIN.stub :gets, 's' do
+      answer = @player.send :should_i_hit?
+      assert (answer == false)
     end
-
-    assert (answer == false)
   end
 end
