@@ -2,19 +2,16 @@ module Blackjack
 
   class Player
     attr_reader :name, :hand
+    attr_accessor :state
 
     def self.define_states(*states)
       states.each do |state|
-        define_method("to_#{state}") do
+        define_method("be_#{state}") do
           @state = state.to_sym
         end
 
-        define_method("state_#{state}?") do
-          current_state == state.to_sym
-        end
-
-        define_method("state_#{state}") do
-          state.to_sym
+        define_method("#{state}?") do
+          @state == state.to_sym
         end
       end
 
@@ -28,41 +25,33 @@ module Blackjack
     def initialize(name, options = {})
       @name = name
       @hand = HandCard.new()
-      @state = state_normal
+      @state = :normal
     end
 
     def hit(card)
       @hand << card
+
+      if @hand.blackjack?
+        be_blackjack
+      elsif @hand.bust?
+        be_bust
+      end
     end
     alias_method :take_card, :hit
 
-    def hit_or_stay?
+    def hit_or_stay
       if should_i_hit?
         say "Hit"
         true
       else
         say "Stay"
-        to_stay
+        be_stay
         false
       end
     end
 
-    def state_bust?(check_unflipped_card = false)
-      current_state(check_unflipped_card) == state_bust
-    end
-
-    def current_state(check_unflipped_card = false)
-      if @hand.points == 21
-        state_blackjack
-      elsif @hand.select{ |c| c.flipped? || check_unflipped_card }.points > 21
-        state_bust
-      else
-        @state
-      end
-    end
-
     def over?
-      !state_normal?
+      !normal?
     end
 
     private
@@ -78,15 +67,8 @@ module Blackjack
   end
 
   class RealPlayer < Player
-    def hit_or_stay?
-      if STDIN.gets.chomp.downcase == 'h'
-        say 'Hit'
-        true
-      else
-        say 'Stay'
-        to_stay
-        false
-      end
+    def should_i_hit?
+      STDIN.gets.chomp.downcase != 's'
     end
   end
 
