@@ -51,13 +51,12 @@ module Blackjack
   end
 
   class HandCard < Array
-    def points
-      points = min_points
+    def points(only_check_flipped = true)
+      points = min_points(only_check_flipped)
 
-      select{ |card| card.flipped? && card == Card.new('A') }
-        .size.times do
-          break if points + 10 > 21
-          points += 10
+      ace_counts(only_check_flipped).times do
+        break if points + 10 > 21
+        points += 10
       end
       points
     end
@@ -75,7 +74,7 @@ module Blackjack
     end
 
     def blackjack?
-      points == 21
+      points(false) == 21
     end
 
     def all_flipped
@@ -84,14 +83,18 @@ module Blackjack
 
     private
 
-    def min_points
-      select(&:flipped?).inject(0) do |total_points, card|
+    def min_points(only_check_flipped = true)
+      hand = only_check_flipped ? select(&:flipped?) : self
+
+      hand.inject(0) do |total_points, card|
         total_points + card.point
       end
     end
 
-    def ace_counts
-      count { |card| card == Card.new('A') }
+    def ace_counts(only_check_flipped = true)
+      hand = only_check_flipped ? select(&:flipped?) : self
+
+      hand.count { |card| card == Card.new('A') }
     end
   end
 
