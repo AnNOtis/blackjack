@@ -13,6 +13,12 @@ class TestHandCard < Minitest::Test
       Card.new('2')
     ]) # 13
 
+    @hand_with_unflipped_card = HandCard.new([
+      Card.new('5', false),
+      Card.new('3'),
+      Card.new('2')
+    ]) # 10
+
     @hand_blackjack = HandCard.new([
       Card.new('2'),
       Card.new('4'),
@@ -61,7 +67,8 @@ class TestHandCard < Minitest::Test
 
   def test_min_points
     assert_equal 13, (@hand.send :min_points)
-    assert_equal  5, (@hand_with_ace.send :min_points)
+    assert_equal  5, (@hand_with_unflipped_card.send :min_points)
+    assert_equal 10, (@hand_with_unflipped_card.send :min_points, false)
   end
 
   def test_points
@@ -73,16 +80,8 @@ class TestHandCard < Minitest::Test
     assert_equal 16, @hand_with_two_ace.points
     assert_equal 17, @hand_with_multiple_ace.points
     assert_equal 18, @hand_with_multiple_ace_2.points
-  end
-
-  def test_points_should_not_include_unflipped_card
-    hand = HandCard.new([
-      Card.new('5', false),
-      Card.new('3'),
-      Card.new('2')
-    ])
-
-    assert_equal 5, hand.points
+    assert_equal  5, @hand_with_unflipped_card.points
+    assert_equal 10, @hand_with_unflipped_card.points(false)
   end
 
   def test_select
@@ -95,14 +94,36 @@ class TestHandCard < Minitest::Test
   def test_ace_count
     assert_equal 1, @hand_with_ace.send(:ace_counts)
     assert_equal 3, @hand_with_multiple_ace.send(:ace_counts)
+
+    hand = HandCard.new([
+      Card.new('A'),
+      Card.new('A', false)
+    ])
+    assert_equal 1, hand.send(:ace_counts)
+    assert_equal 2, hand.send(:ace_counts, false)
   end
 
   def test_bust?
+    bust_with_unflipped_card = HandCard.new([
+      Card.new('J', false),
+      Card.new('10'),
+      Card.new('5')
+    ])
+
+    refute @hand.bust?
     assert @hand_bust.bust?
+    refute bust_with_unflipped_card.bust?
   end
 
   def test_blackjack?
+    blackjack_with_unflipped_card = HandCard.new([
+      Card.new('5', false),
+      Card.new('A'),
+      Card.new('5')
+    ])
+
     assert @hand_blackjack.blackjack?
+    assert blackjack_with_unflipped_card.blackjack?
   end
 
   def test_all_flipped
