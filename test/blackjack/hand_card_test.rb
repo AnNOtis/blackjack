@@ -60,8 +60,8 @@ class TestHandCard < Minitest::Test
   end
 
   def test_min_points
-    assert_equal 13, @hand.min_points
-    assert_equal  5, @hand_with_ace.min_points
+    assert_equal 13, (@hand.send :min_points)
+    assert_equal  5, (@hand_with_ace.send :min_points)
   end
 
   def test_points

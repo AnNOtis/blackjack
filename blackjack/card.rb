@@ -51,16 +51,10 @@ module Blackjack
   end
 
   class HandCard < Array
-    def min_points
-      inject(0) do |total_points, card|
-        total_points + card.point
-      end
-    end
 
     def points
-      return min_points if min_points > 11
-
       points = min_points
+
       ace_counts.times do
         break if points + 10 > 21
         points += 10
@@ -76,7 +70,21 @@ module Blackjack
       HandCard.new(super(&block))
     end
 
+    def bust?
+      points > 21
+    end
+
+    def blackjack?
+      points == 21
+    end
+
     private
+
+    def min_points
+      inject(0) do |total_points, card|
+        total_points + card.point
+      end
+    end
 
     def ace_counts
       count { |card| card == Card.new('A') }
