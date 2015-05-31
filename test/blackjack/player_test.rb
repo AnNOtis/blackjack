@@ -75,13 +75,13 @@ class TestPlayer < Minitest::Test
     assert_equal :normal, @player.state
 
     @player.be_stay
-    assert_wqual :stay, @player.state
+    assert_equal :stay, @player.state
 
     @player.be_bust
     assert_equal :bust, @player.state
 
     @player.be_blackjack
-    assert_equal :blakcjack, @player.state
+    assert_equal :blackjack, @player.state
   end
 
   def test_want_hit_or_stay
