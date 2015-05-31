@@ -88,10 +88,10 @@ class TestHandCard < Minitest::Test
   end
 
   def test_bust?
-    assert @hand_blackjack.bust?
+    assert @hand_bust.bust?
   end
 
   def test_blackjack?
-    assert @hand_bust.bust?
+    assert @hand_blackjack.blackjack?
   end
 end
