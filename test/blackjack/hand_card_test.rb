@@ -75,7 +75,7 @@ class TestHandCard < Minitest::Test
     assert_equal 18, @hand_with_multiple_ace_2.points
   end
 
-  def test points_should_not_include_unflipped_card
+  def test_points_should_not_include_unflipped_card
     hand = HandCard.new([
       Card.new('5', false),
       Card.new('3'),
