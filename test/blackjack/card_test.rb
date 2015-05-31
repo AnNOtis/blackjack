@@ -2,16 +2,18 @@ require 'test_helper'
 require 'blackjack'
 
 class TestCard < MiniTest::Test
+  Card     = Blackjack::Card
+  HandCard = Blackjack::HandCard
 
   def setup
-    @card = Blackjack::Card.new('J')
-    @card_ace = Blackjack::Card.new('A')
+    @card = Card.new('J')
+    @card_ace = Card.new('A')
   end
 
   def test_all_names
     expect_names = %w(A 2 3 4 5 6 7 8 9 10 J Q K)
 
-    assert_equal expect_names, Blackjack::Card.all_names
+    assert_equal expect_names, Card.all_names
   end
 
   def test_default_card_is_flipped
@@ -20,7 +22,8 @@ class TestCard < MiniTest::Test
   end
 
   def test_flip
-    refute @card.flip.flipped?
+    assert Card.new('A').flip.flipped?
+    assert Card.new('A', false).flip.flipped?
   end
 
   def test_flip_should_return_self
@@ -28,13 +31,13 @@ class TestCard < MiniTest::Test
   end
 
   def test_point
-    assert_equal 1, Blackjack::Card.new('A').point
-    assert_equal 10, Blackjack::Card.new('J').point
+    assert_equal 1, Card.new('A').point
+    assert_equal 10, Card.new('J').point
   end
 
   def test_equal_sign
-    assert @card_ace == Blackjack::Card.new('A')
-    refute @card_ace == Blackjack::Card.new('J')
+    assert @card_ace == Card.new('A')
+    refute @card_ace == Card.new('J')
   end
 
   def test_to_s
