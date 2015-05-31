@@ -13,13 +13,15 @@ class TestPlayer < Minitest::Test
   def test_initialize_state
     assert_equal 'Otis', @player.name
     assert_equal :normal, @player.state
+
+    @player.take_card(Card.new('J'))
     assert_instance_of HandCard, @player.hand
   end
 
   def test_take_card
-    hand = @player.take_card Card.new('J')
+    @player.take_card Card.new('J')
 
-    assert_instance_of HandCard, hand
+    assert_instance_of HandCard, @player.hand
     assert_equal HandCard.new([Card.new('J')]), @player.hand
   end
 
