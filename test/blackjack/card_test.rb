@@ -4,7 +4,7 @@ require 'blackjack'
 class TestCard < MiniTest::Test
 
   def setup
-    @unflipped_card = Blackjack::Card.new('J')
+    @card = Blackjack::Card.new('J')
     @card_ace = Blackjack::Card.new('A')
   end
 
@@ -14,17 +14,17 @@ class TestCard < MiniTest::Test
     assert_equal expect_names, Blackjack::Card.all_names
   end
 
-  def test_default_card_is_unflipped
-    refute @unflipped_card.flipped
-    refute @unflipped_card.flipped?
+  def test_default_card_is_flipped
+    assert @card.flipped
+    assert @card.flipped?
   end
 
   def test_flip
-    assert @unflipped_card.flip.flipped?
+    refute @card.flip.flipped?
   end
 
   def test_flip_should_return_self
-    assert_same @unflipped_card.flip, @unflipped_card
+    assert_same @card.flip, @card
   end
 
   def test_point
