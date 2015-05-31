@@ -3,7 +3,6 @@ require 'blackjack'
 
 class TestCard < MiniTest::Test
   Card     = Blackjack::Card
-  HandCard = Blackjack::HandCard
 
   def setup
     @card = Card.new('J')

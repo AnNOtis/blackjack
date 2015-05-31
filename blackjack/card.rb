@@ -23,7 +23,7 @@ module Blackjack
       POINT_MAPPING.keys
     end
 
-    def initialize(name, flipped = false)
+    def initialize(name, flipped = true)
       @name = name
       @flipped = flipped
     end
@@ -51,13 +51,13 @@ module Blackjack
   end
 
   class HandCard < Array
-
     def points
       points = min_points
 
-      ace_counts.times do
-        break if points + 10 > 21
-        points += 10
+      select{ |card| card.flipped? && card == Card.new('A') }
+        .size.times do
+          break if points + 10 > 21
+          points += 10
       end
       points
     end
@@ -78,10 +78,14 @@ module Blackjack
       points == 21
     end
 
+    def all_flipped
+      each(&:flip)
+    end
+
     private
 
     def min_points
-      inject(0) do |total_points, card|
+      select(&:flipped?).inject(0) do |total_points, card|
         total_points + card.point
       end
     end
