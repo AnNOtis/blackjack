@@ -126,8 +126,8 @@ class TestHandCard < Minitest::Test
     assert blackjack_with_unflipped_card.blackjack?
   end
 
-  def test_all_flipped
-    @hand.all_flipped
+  def test_flip_all
+    @hand.flip_all
     all_cards_flipped_state =
       @hand.inject(true){ |state, card| state && card.flipped? }
 
