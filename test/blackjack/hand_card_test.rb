@@ -75,6 +75,16 @@ class TestHandCard < Minitest::Test
     assert_equal 18, @hand_with_multiple_ace_2.points
   end
 
+  def test points_should_not_include_unflipped_card
+    hand = HandCard.new([
+      Card.new('5', false),
+      Card.new('3'),
+      Card.new('2')
+    ])
+
+    assert_equal 5, hand.points
+  end
+
   def test_select
     @selected_result = @hand.select{ |card| card != Card.new('2') }
 
@@ -93,5 +103,13 @@ class TestHandCard < Minitest::Test
 
   def test_blackjack?
     assert @hand_blackjack.blackjack?
+  end
+
+  def test_all_flipped
+    @hand.all_flipped
+    all_cards_flipped_state =
+      @hand.inject(true){ |state, card| state && card.flipped? }
+
+    assert all_cards_flipped_state
   end
 end
