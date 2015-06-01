@@ -20,20 +20,28 @@ class TestPlayer < Minitest::Test
 
   def test_take_card
     @player.take_card Card.new('J')
+    @player.take_card Card.new('5')
 
+    refute @player.hand.first.flipped?
+    assert @player.hand[1].flipped?
     assert_instance_of HandCard, @player.hand
-    assert_equal HandCard.new([Card.new('J')]), @player.hand
+    assert_equal HandCard.new([Card.new('J'), Card.new('5')]), @player.hand
   end
 
-  def test_take_card_with_state_change
+  def test_take_card_with_state_change_blackjack
+    @player.take_card Card.new('J')
+    @player.take_card Card.new('A')
+
+    assert_equal :blackjack, @player.state
+  end
+
+  def test_take_card_with_state_change_bust
+    @player.take_card Card.new('K')
+    @player.take_card Card.new('K')
     @player.take_card Card.new('J')
     assert_equal :normal, @player.state
 
-    @player.take_card Card.new('A')
-    assert_equal :blackjack, @player.state
-
-    @player.take_card Card.new('K')
-    @player.take_card Card.new('3')
+    @player.take_card Card.new('J')
     assert_equal :bust, @player.state
   end
 
@@ -122,5 +130,20 @@ class TestPlayer < Minitest::Test
     @player.hand.stub :points, 16 do
       refute @player.send :should_i_hit?
     end
+  end
+
+  def test_check_state
+    @player.take_card Card.new('J')
+    @player.take_card Card.new('A')
+
+    @player.send :check_state
+    assert_equal :blackjack, @player.state
+
+    @player.take_card Card.new('K')
+    @player.take_card Card.new('K')
+    @player.take_card Card.new('J')
+
+    @player.send :check_state
+    assert_equal :bust, @player.state
   end
 end
