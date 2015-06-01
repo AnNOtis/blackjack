@@ -29,15 +29,18 @@ module Blackjack
     end
 
     def hit(card)
+      card.flipped = hand.empty? ? false : true
       @hand << card
 
-      if @hand.blackjack?
-        be_blackjack
-      elsif @hand.bust?
-        be_bust
-      end
+      check_state
     end
     alias_method :take_card, :hit
+
+    def state
+      check_state
+
+      @state
+    end
 
     def hit_or_stay
       if should_i_hit?
@@ -63,6 +66,14 @@ module Blackjack
 
     def say(msg)
       puts "Player(#{name}): " + msg
+    end
+
+    def check_state
+      if @hand.blackjack?
+        be_blackjack
+      elsif @hand.bust?
+        be_bust
+      end
     end
   end
 

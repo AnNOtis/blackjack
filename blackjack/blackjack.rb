@@ -14,10 +14,11 @@ module Blackjack
     end
 
     def start
-      puts '開始遊戲'
-      puts "Dealer: #{@dealer.name}"
-      puts "Players: #{@players.map(&:name).to_a.join(' ')}"
-      puts '============'
+      hint <<-EOF.gsub(/^ */, '')
+        開始遊戲
+        Dealer: #{@dealer.name}
+        Players: #{@players.map(&:name).to_a.join(' ')}
+      EOF
 
       shuffle_card
       blackjack_progress
@@ -38,9 +39,11 @@ module Blackjack
         end
       end
 
-      unless everyplayer_bust?
+      unless everyone_bust?
         @dealer.ask_hit_or_stay_until_over(@dealer)
       end
+
+      flip_everyones_hand
 
       display_everyones_hand
 
@@ -65,6 +68,10 @@ module Blackjack
 
     private
 
+    def hint(msg)
+      puts "\n===============\n" + msg.chomp + "\n===============\n\n"
+    end
+
     def deal_to_players_in_the_beginning
       @players.cycle(2) do |player|
         @dealer.deal(player)
@@ -80,26 +87,32 @@ module Blackjack
     def display_everyones_hand
       puts "\n=========== 統計結果 ===============\n"
 
-      puts "#{@dealer.name.ljust(10)} | " + @dealer.hand.display.ljust(15) + " | (#{@dealer.hand.points}) #{@dealer.current_state(true)}"
+      puts "#{@dealer.name.ljust(10)} | " + @dealer.hand.display.ljust(15) + " | (#{@dealer.hand.points}) #{@dealer.state}"
 
       @players.each do |player|
-        puts "#{player.name.ljust(10)} | " + player.hand.display.ljust(15) + " | (#{player.hand.points}) #{player.current_state(true)}"
+        puts "#{player.name.ljust(10)} | " + player.hand.display.ljust(15) + " | (#{player.hand.points}) #{player.state}"
       end
+
+      puts "====================================\n"
     end
 
-    def everyplayer_bust?
-      @players.all?{ |player| player.state_bust?(true) }
+    def flip_everyones_hand
+      @players.each{ |player| player.hand.flip_all }
+    end
+
+    def everyone_bust?
+      @players.all?(&:bust?)
     end
 
     def judge_winner
       winner =
-        if @dealer.state_blackjack?
+        if @dealer.blackjack?
           @dealer
-        elsif @players.any?(&:state_blackjack?)
-          @players.find(&:state_blackjack?)
+        elsif @players.any?(&:blackjack?)
+          @players.find(&:blackjack?)
         else
           @players.push(@dealer)
-            .reject{ |p| p.state_bust?(true) }
+            .reject(&:bust?)
             .max_by{ |player| player.hand.points }
         end
 
@@ -108,4 +121,4 @@ module Blackjack
   end
 end
 
-# Blackjack::Game.start
+Blackjack::Game.start

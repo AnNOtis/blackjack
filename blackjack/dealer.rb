@@ -13,33 +13,24 @@ module Blackjack
     end
 
     def next_card
-      Card.new(@cards_in_the_box.pop)
+      Card.new(@cards_in_the_box.pop, false)
     end
 
     def ask_hit_or_stay_until_over(player)
       until (player.over?) do
         say "ask => #{player.name} | #{player.hand.display} : Hit or Stay? (h/s)"
 
-        if player.hit_or_stay?
+        if player.hit_or_stay
           deal(player)
-        end
-
-        if player.state_bust?
-          player.to_bust
         end
       end
     end
 
     def deal(player)
-      if player.hand.size == 0
-        next_c = next_card
-        player.take_card(next_c)
-        say "#{player.name} got #{next_c.name}"
-      else
-        next_c = next_card.flip
-        player.take_card(next_c)
-        say "#{player.name} got #{next_c.name}"
-      end
+      current_next_card = next_card
+      player.take_card(current_next_card)
+
+      say "#{player.name} got #{current_next_card.name}"
     end
 
     private

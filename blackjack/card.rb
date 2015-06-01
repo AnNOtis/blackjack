@@ -17,7 +17,8 @@ module Blackjack
       'K' => 10
     }
 
-    attr_reader :name, :flipped
+    attr_reader :name
+    attr_accessor :flipped
 
     def self.all_names
       POINT_MAPPING.keys
